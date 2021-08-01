@@ -38,6 +38,7 @@ img {
     padding: 0 4%;
 }
 
+
 .title {
     text-align: left;
     font-size: 36px;
@@ -49,6 +50,7 @@ img {
 #title-wrapper {
     background-image: url(../image/header-bg.jpg);
     height: 200px;
+    min-width: 1060px;  /* article min-width + aside min-width */
     margin-bottom: 40px;
 }
 
@@ -69,15 +71,45 @@ img {
     ----------------------------------------------------------------------  */
 article {
     width: 74%;
+    min-width: 850px;  /* 天気表示が改行しないように合わせる */
     margin: 5px;
+    /* display: flex; */
 }
 
 aside {
     width: 22%;
+    min-width: 210px;  /* 赤倉が改行しないように合わせる */
     margin: 5px;
 }
 
 /* article */
+
+.each-wrapper {
+    display: flex;
+}
+
+#mydiv tr,td,th {
+    border: none;
+    font-size: 80%;
+}
+
+#mydiv td {
+    width: 60px;
+}
+
+.basic-info {
+    width: 165px;
+}
+
+.weather-info tr,td,th {
+    padding: 0 10px;
+    text-align: center;
+    border: solid 1px black;
+}
+
+.today {
+    margin: 10px 0;
+}
 
 
 
@@ -122,6 +154,7 @@ aside {
 */
 
 /* aside */
+
 
 .main-content {
     display: flex;
