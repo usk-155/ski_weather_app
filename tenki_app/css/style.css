@@ -50,7 +50,7 @@ img {
 #title-wrapper {
     background-image: url(../image/header-bg.jpg);
     height: 200px;
-    min-width: 1060px;  /* article min-width + aside min-width */
+    min-width: 1080px;  /* article min-width + aside min-width + margin 5*4 */
     margin-bottom: 40px;
 }
 
@@ -62,10 +62,18 @@ img {
     margin-top: 34px;
     list-style: none;
     display: block;
-    width: 250px;
+    width: 360px;
     color: #432;
 }
 
+input[type="date"] {
+    height: 20px;
+    padding-bottom: 5px;
+}
+
+.today {
+    margin: 10px 0;
+}
 
 /* main-contents wrapper
     ----------------------------------------------------------------------  */
@@ -88,29 +96,20 @@ aside {
     display: flex;
 }
 
-#mydiv tr,td,th {
-    border: none;
-    font-size: 80%;
-}
-
-#mydiv td {
-    width: 60px;
-}
-
 .basic-info {
     width: 165px;
 }
 
 .weather-info tr,td,th {
+    font-size: 70%;
     padding: 0 10px;
     text-align: center;
     border: solid 1px black;
 }
 
-.today {
-    margin: 10px 0;
+#weather-info td {
+    width: 40px;
 }
-
 
 
 /*

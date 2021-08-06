@@ -1,3 +1,7 @@
+<!--
+    weather_info の表示を整える
+-->
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -16,9 +20,9 @@
             </div> <!-- title -->
             <div class="date">
                 <ul class="date-list">
-                    <li><a href="news.html">Today : </a></li>
-                    <li><a href="menu.html">Check In : </a></li>
-                    <li><a href="contact.html">AAAAAAA : </a></li>
+                    <li id="todayNow"></li>
+                    <li>CHECK IN : <input type="date" id="checkIn" value="2021-08-05"></li>
+                    <li><a href="">AAAAAAA : </a></li>
                 </ul>
             </div>
         </header>
@@ -27,16 +31,30 @@
     
     <div class="main-content wrapper">      <!-- main-content wrapper -->
         <article>                           <!-- article -->
-            <div id="mydiv"></div>
+            <div id="weather-info"> </div>
+
+            <div class="each-wrapper">
+                <div class="basic-info">
+                    <h3>〇〇スキー場</h3>
+                    <p>★★★☆☆ 3.0点</p>
+                    <p>営業：全面滑走可</p>
+                    <p>天気：晴れ</p>
+                </div>
+
+                <div class="twitter-info">
+
+                </div>
+            </div>
+
         </article>                          <!-- article -->
 
         <aside>　<!-- aside -->
             <h3 class="sub-title">スキー場一覧</h3>
             <ul class="sub-menu">
-                <li><input type="checkbox"> 蔵王スキー場</input></li>
-                <li><input type="checkbox"> 〇〇スキー場</input></li>
-                <li><input type="checkbox"> 〇〇スキー場</input></li>
-                <li><input type="checkbox"> 〇〇スキー場</input></li>
+                <li><input type="checkbox" value="0" onchange=buttonClick(value);> 蔵王スキー場</input></li>
+                <li><input type="checkbox" value="1" onchange=buttonClick(value);> 苗場スキー場</input></li>
+                <li><input type="checkbox" value="2" onchange=buttonClick(value);> 赤倉観光リゾートスキー場</input></li>
+                <li><input type="checkbox" value="3" onchange=buttonClick(value);> 〇〇スキー場</input></li>
             </ul>
             
             <h3 class="sub-title">サブタイトル</h3>
@@ -49,7 +67,7 @@
     
     <footer>
         <div class="wraper">
-            <p><small>&copy; 2019 Manabox</small></p>
+            <p><small>&copy; 2021 usk-155</small></p>
         </div>
     </footer>
 
