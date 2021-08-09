@@ -1,4 +1,4 @@
-// headerの日付入力
+// weather-info の表示を編集 / チェックボックスと連動（作業中）
 
 // 取得したAPI Keyをここに記載
 let apiKey = "a533675e07f5f09476d1b1b748f2b159";       // ------------ ①
@@ -20,18 +20,18 @@ let todayUnix = today.getTime()/1000; // 【 今日のUnixTime 】
 // todayをHTMLに出力
 todayNow.textContent = "TODAY : " + formatDate(today); 
 
-console.log(todayUnix);
-
 // checkInの日付09時 取得　/　checkInUnix と todayUnix の時間差(整数値)を取得
 document.getElementById("checkIn").onchange = function () {
     let checkInUnix = document.getElementById("checkIn").valueAsNumber/1000; // 【 checkInのUnixTime 】
     timeDiff = parseInt((checkInUnix - todayUnix)/3600); //時間座(整数値)
 }; 
 
+// 現在の時間(3時間で1コマ　1~8)
+let listNo = parseInt(today.getHours()/3)+1;  // 5
+
+
 // (checkIn-todayNow)/3 => 整数　=2 → list2からスタート
 // 0,1 は空白にする
-
-
 
 
 
@@ -41,99 +41,135 @@ function buttonClick(value) {
     fetch(url, {
         method: "GET",
     })
-    .then(response => response.json())
-    .then(json => {
-        //let item = eval("(" + xhr.responseText + ")");            // ------ ④ JSONをjavascriptオブジェクトには変換
-        // データを展開してdiv要素に設定する
-        let div = document.getElementById("weather-info");
-        let date = new Date(json["list"][0]["dt"] * 1000).toLocaleDateString('ja-JP').slice(5);
+        .then(response => response.json())
+        .then(json => {
+            let articleWrapper = document.getElementById("article-wrapper");
+            idNaming = "information" + [value];
+            if (document.checkList.elements[value].checked === true) {
+                const infoDiv = document.createElement("div");
+                //basicInfo {html}
+                let html = "<h2>" + resortName[value] + "</h2>"
+                html += "<p>営業</p>"
+                html += "<p>天気</p>"
 
-        let html = "<table>";
 
-        html += "<tr><th>" + new Date(json["list"][0]["dt"] * 1000).toLocaleDateString('ja-JP').slice(5) + "</th>";
-        for (i = 0; i < 8; i++) {
-            html += "<td>" + new Date(json["list"][i]["dt"] * 1000).toLocaleString('ja-JP', { hour: "numeric" }) + "</td>";
-        };
-        html += "</tr>";
+                // weatherInfo {weatherTable}
+                let weatherTable = "<table>";
+                weatherTable += "<tr><th>" + new Date(json["list"][0]["dt"] * 1000).toLocaleDateString('ja-JP').slice(5) + "</th>";
+                for (i = 0; i < listNo; i++) {
+                    weatherTable += "<td>-</td>";
+                };
+                for (i = 0; i < (8 - listNo); i++) {
+                    weatherTable += "<td>" + new Date(json["list"][i]["dt"] * 1000).toLocaleString('ja-JP', { hour: "numeric" }) + "</td>";
+                };
+                weatherTable += "</tr>";
+                weatherTable += "<tr><th>天気</th>"
+                for (i = 0; i < listNo; i++) {
+                    weatherTable += "<td>-</td>";
+                };
+                for (i = 0; i < (8 - listNo); i++) {
+                    weatherTable += "<td>" + json["list"][i]["weather"]["0"]["main"] + "</td>";
+                };
+                weatherTable += "</tr>";
+                weatherTable += "<tr><th>気温</th>"
+                for (i = 0; i < listNo; i++) {
+                    weatherTable += "<td>-</td>";
+                };
+                for (i = 0; i < (8 - listNo); i++) {
+                    weatherTable += "<td>" + json["list"][i]["main"]["temp"] + "</td>";
+                };
+                weatherTable += "</tr>";
+                weatherTable += "<tr><th>降水</th>"
+                for (i = 0; i < listNo; i++) {
+                    weatherTable += "<td>-</td>";
+                };
+                for (i = 0; i < (8 - listNo); i++) {
+                    if (json["list"][i]["weather"]["0"]["main"] == "Rain") {
+                        weatherTable += "<td>" + json["list"][i]["rain"]["3h"] + "mm</td>";
+                    } else {
+                        weatherTable += "<td>" + "0mm" + "</td>";
+                    };
+                };
+                weatherTable += "</tr>";
+                weatherTable += "<tr><th>降雪</th>"
+                for (i = 0; i < listNo; i++) {
+                    weatherTable += "<td>-</td>";
+                };
+                for (i = 0; i < (8 - listNo); i++) {
+                    if (json["list"][i]["weather"]["0"]["main"] == "Snow") {
+                        weatherTable += "<td>" + json["list"][i]["snow"]["3h"] + "mm</td>";
+                    } else {
+                        weatherTable += "<td>" + "0mm" + "</td>";
+                    };
+                };
+                weatherTable += "</tr>";
+                weatherTable += "</table>"
+                weatherTable += "<table>";
+                weatherTable += "<tr><th>" + new Date(json["list"][8]["dt"] * 1000).toLocaleDateString('ja-JP').slice(5) + "</th>";
+                for (i = (8 - listNo); i < (16 - listNo); i++) {
+                    weatherTable += "<td>" + new Date(json["list"][i]["dt"] * 1000).toLocaleString('ja-JP', { hour: "numeric" }) + "</td>";
+                };
+                weatherTable += "</tr>";
+                weatherTable += "<tr><th>天気</th>"
+                for (i = (8 - listNo); i < (16 - listNo); i++) {
+                    weatherTable += "<td>" + json["list"][i]["weather"]["0"]["main"] + "</td>";
+                };
+                weatherTable += "</tr>";
+                weatherTable += "<tr><th>気温</th>"
+                for (i = (8 - listNo); i < (16 - listNo); i++) {
+                    weatherTable += "<td>" + json["list"][i]["main"]["temp"] + "</td>";
+                };
+                weatherTable += "</tr>";
+                weatherTable += "<tr><th>降水</th>"
+                for (i = (8 - listNo); i < (16 - listNo); i++) {
+                    if (json["list"][i]["weather"]["0"]["main"] == "Rain") {
+                        weatherTable += "<td>" + json["list"][i]["rain"]["3h"] + "mm</td>";
+                    } else {
+                        weatherTable += "<td>" + "0mm" + "</td>";
+                    };
+                };
+                weatherTable += "</tr>";
+                weatherTable += "<tr><th>降雪</th>"
+                for (i = (8 - listNo); i < (16 - listNo); i++) {
+                    if (json["list"][i]["weather"]["0"]["main"] == "Snow") {
+                        weatherTable += "<td>" + json["list"][i]["snow"]["3h"] + "mm</td>";
+                    } else {
+                        weatherTable += "<td>" + "0mm" + "</td>";
+                    };
+                };
+                weatherTable += "</tr>";
+                weatherTable += "</table>";
 
-        html += "<tr><th>天気</th>"
-        for (i = 0; i < 8; i++) {
-            html += "<td>" + json["list"][i]["weather"]["0"]["main"] + "</td>";
-        };
-        html += "</tr>";
+                // ▽▽▽ 出力 ▽▽▽
 
-        html += "<tr><th>気温</th>"
-        for (i = 0; i < 8; i++) {
-            html += "<td>" + json["list"][i]["main"]["temp"] + "</td>";
-        };
-        html += "</tr>";
+                // basicInfo 出力
+                const basicInfo = document.createElement("div");
+                basicInfo.innerHTML = html;
 
-        html += "<tr><th>降水</th>"
-        for (i = 0; i < 8; i++) {
-            if (json["list"][i]["weather"]["0"]["main"] == "Rain") {
-                html += "<td>" + json["list"][i]["rain"]["3h"] + "mm</td>";
+                // weatherInfo 出力
+                const weatherInfo = document.createElement("div");
+                weatherInfo.innerHTML = weatherTable;
+
+                // twitter 出力
+
+
+                infoDiv.appendChild(basicInfo);         // basicInfo 出力
+                basicInfo.className = "basic-info";     // basicInfo クラス名
+                infoDiv.appendChild(weatherInfo);       // weatherInfo 出力
+                weatherInfo.className = "weather-info"; // weatherInfo クラス名
+                // twitterInfo 出力
+                // twitterInfo クラス名
+
+                // infoDiv 生成 / id 命名
+                articleWrapper.appendChild(infoDiv);
+                idNaming = "information" + [value];
+                infoDiv.id = idNaming;
+                infoDiv.className = "information";
             } else {
-                html += "<td>" + "0mm" + "</td>";
+                let infoDiv = document.getElementById(idNaming);
+                articleWrapper.removeChild(infoDiv);
             };
-        };
-        html += "</tr>";
 
-        html += "<tr><th>降雪</th>"
-        for (i = 0; i < 8; i++) {
-            if (json["list"][i]["weather"]["0"]["main"] == "Snow") {
-                html += "<td>" + json["list"][i]["snow"]["3h"] + "mm</td>";
-            } else {
-                html += "<td>" + "0mm" + "</td>";
-            };
-        };
-        html += "</tr>";
+        });
 
-        html += "</table>"
-
-        html += "<table>";
-
-        html += "<tr><th>" + new Date(json["list"][8]["dt"] * 1000).toLocaleDateString('ja-JP').slice(5) + "</th>";
-        for (i = 8; i < 16; i++) {
-            html += "<td>" + new Date(json["list"][i]["dt"] * 1000).toLocaleString('ja-JP', { hour: "numeric" }) + "</td>";
-        };
-        html += "</tr>";
-
-        html += "<tr><th>天気</th>"
-        for (i = 8; i < 16; i++) {
-            html += "<td>" + json["list"][i]["weather"]["0"]["main"] + "</td>";
-        };
-        html += "</tr>";
-
-        html += "<tr><th>気温</th>"
-        for (i = 8; i < 16; i++) {
-            html += "<td>" + json["list"][i]["main"]["temp"] + "</td>";
-        };
-        html += "</tr>";
-
-        html += "<tr><th>降水</th>"
-        for (i = 8; i < 16; i++) {
-            if (json["list"][i]["weather"]["0"]["main"] == "Rain") {
-                html += "<td>" + json["list"][i]["rain"]["3h"] + "mm</td>";
-            } else {
-                html += "<td>" + "0mm" + "</td>";
-            };
-        };
-        html += "</tr>";
-
-        html += "<tr><th>降雪</th>"
-        for (i = 8; i < 16; i++) {
-            if (json["list"][i]["weather"]["0"]["main"] == "Snow") {
-                html += "<td>" + json["list"][i]["snow"]["3h"] + "mm</td>";
-            } else {
-                html += "<td>" + "0mm" + "</td>";
-            };
-        };
-        html += "</tr>";
-
-        html += "</table>";
-
-        div.innerHTML = html;
-    });
 };
-
-

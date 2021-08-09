@@ -92,23 +92,46 @@ aside {
 
 /* article */
 
-.each-wrapper {
-    display: flex;
+.information {
+    border: 1px solid #432;
+    margin-bottom: 5px;
+    max-width: 800px;
 }
 
 .basic-info {
-    width: 165px;
+    display: inline-block;
+    vertical-align: top;
+    padding: 5px;
+    width: 200px;
 }
 
-.weather-info tr,td,th {
+.weather-info {
+    display: inline-block;
+    width: 480px;
+}
+
+h2 {
+    font-size: 18px;
+}
+
+table {
+    margin-top: 10px;
+}
+
+
+table tr,td,th {
     font-size: 70%;
-    padding: 0 10px;
+    padding: 0;
     text-align: center;
     border: solid 1px black;
 }
 
-#weather-info td {
-    width: 40px;
+table th {
+    width: 30px;
+}
+
+table td {
+    width: 50px;
 }
 
 
@@ -155,10 +178,14 @@ aside {
 /* aside */
 
 
+#ok {
+    border: 2px solid #0bd; 
+}
+
 .main-content {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 50px
+    margin-bottom: 50px　
 }
 
 .sub-title {
