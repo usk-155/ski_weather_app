@@ -1,11 +1,26 @@
-// weather-info の表示を編集 / チェックボックスと連動（作業中）
+// asideのlistをスプレッドシートのJSONファイルから取得
 
 // 取得したAPI Keyをここに記載
-let apiKey = "a533675e07f5f09476d1b1b748f2b159";       // ------------ ①
-let resortName = ["蔵王温泉スキー場", "苗場スキー場", "赤倉観光リゾート", ];//緯度
-let lat = ["38.1704429", "36.7916707", "36.8866025", ];//経度
-let lon = ["140.3992911", "138.7799397", "138.1736814", ];//緯度
-let url = "https://api.openweathermap.org/data/2.5/forecast?lat=" + lat[0] + "&lon=" + lon[0] + "&units=metric&lang=ja&appid=" + apiKey ;
+let resortListUrl = "https://script.google.com/macros/s/AKfycbxQgCAcxcAkkThEWk0Fn7b_4L6MEzSQ5lw_GQuMEza_7iUcny6p2XP3R7r6DeE4uu0z/exec";
+
+fetch(resortListUrl, {
+    method: "GET",
+})
+    .then(response => response.json())
+    .then(json => {
+        let asideWrapper = document.getElementById("aside-wrapper");
+        let listHtml = "<h2 class='sub-title'>スキー場一覧 <input type='button' id='ok' value=' OK ' onclick='buttonClickOk()'></h2><form name='form1'>";
+        for (j = 0; j < (json.length)- 1; j++){
+            listHtml += "<h3 class='region'>" + json[j]["area"] + "</h3>";
+            for (i = 0; i < (json[j]["detail"].length); i++) {
+                listHtml += "<li><input type='checkbox' value='" + json[j]["detail"][i]["place_detail"]["number"] + ", " + json[j]["detail"][i]["place_detail"]["lat"] + ", " + json[j]["detail"][i]["place_detail"]["lon"] + ", " + json[j]["detail"][i]["place_detail"]["name"] + "' name='checkBox'> " + json[j]["detail"][i]["place_detail"]["name"] + "</input></li>"
+            };
+        };
+        listHtml += "</form>";
+        asideWrapper.innerHTML = listHtml;
+    });
+
+
 
 // date format
 let formatDate = (dateTime) => {
@@ -34,23 +49,51 @@ let listNo = parseInt(today.getHours()/3)+1;  // 5
 // 0,1 は空白にする
 
 
+// form name='form1'
+// input type="checkbox" value="1, 123.4567890, 123.4567890" name="checkBox" onchange="buttonClick(value)"
 
-function buttonClick(value) {
-    let url = "https://api.openweathermap.org/data/2.5/forecast?lat=" + lat[value] + "&lon=" + lon[value] + "&units=metric&appid=" + apiKey;
-    // https://api.openweathermap.org/data/2.5/forecast?lat=38.1704429&lon=140.3992911&units=metric&appid=a533675e07f5f09476d1b1b748f2b159
-    fetch(url, {
-        method: "GET",
-    })
-        .then(response => response.json())
-        .then(json => {
-            let articleWrapper = document.getElementById("article-wrapper");
-            idNaming = "information" + [value];
-            if (document.checkList.elements[value].checked === true) {
+
+let apiKey = "a533675e07f5f09476d1b1b748f2b159";
+
+function buttonClickOk() {
+    let initialize = document.getElementById("article-wrapper");
+    initialize.innerHTML = "";
+
+    let articleWrapper = document.getElementById("article-wrapper");
+
+    const arrCheck = [];
+    const checkBox = document.form1.checkBox;
+    // console.log(checkBox);
+
+
+    for (let g = 0; g < checkBox.length; g++) {
+        if (checkBox[g].checked) {
+            arrCheck.push(checkBox[g].value);
+        }
+    }
+
+    for (let h = 0; h < arrCheck.length; h++) {
+        result = arrCheck[h].split(", ");
+        let num = result[0];
+        let lat = result[1];
+        let lon = result[2];
+        let name = result[3];
+
+
+        let url = "https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&units=metric&appid=" + apiKey;
+        // https://api.openweathermap.org/data/2.5/forecast?lat=38.1704429&lon=140.3992911&units=metric&appid=a533675e07f5f09476d1b1b748f2b159
+        fetch(url, {
+            method: "GET",
+        })
+            .then(response => response.json())
+            .then(json => {
+                // let articleWrapper = document.getElementById("article-wrapper");
+                idNaming = "information" + num;
                 const infoDiv = document.createElement("div");
                 //basicInfo {html}
-                let html = "<h2>" + resortName[value] + "</h2>"
-                html += "<p>営業</p>"
-                html += "<p>天気</p>"
+                let html = "<h2>" + name + "</h2>";
+                html += "<p>営業</p>";
+                html += "<p>天気</p>";
 
 
                 // weatherInfo {weatherTable}
@@ -162,14 +205,10 @@ function buttonClick(value) {
 
                 // infoDiv 生成 / id 命名
                 articleWrapper.appendChild(infoDiv);
-                idNaming = "information" + [value];
+                idNaming = "information" + num;
                 infoDiv.id = idNaming;
                 infoDiv.className = "information";
-            } else {
-                let infoDiv = document.getElementById(idNaming);
-                articleWrapper.removeChild(infoDiv);
-            };
-
-        });
+            });
+    }
 
 };
