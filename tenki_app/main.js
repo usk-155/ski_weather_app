@@ -1,5 +1,6 @@
 // asideのlistをスプレッドシートのJSONファイルから取得
 
+
 // 取得したAPI Keyをここに記載
 let resortListUrl = "https://script.google.com/macros/s/AKfycbxQgCAcxcAkkThEWk0Fn7b_4L6MEzSQ5lw_GQuMEza_7iUcny6p2XP3R7r6DeE4uu0z/exec";
 
@@ -8,18 +9,31 @@ fetch(resortListUrl, {
 })
     .then(response => response.json())
     .then(json => {
-        let asideWrapper = document.getElementById("aside-wrapper");
         let listHtml = "<h2 class='sub-title'>スキー場一覧 <input type='button' id='ok' value=' OK ' onclick='buttonClickOk()'></h2><form name='form1'>";
-        for (j = 0; j < (json.length)- 1; j++){
-            listHtml += "<h3 class='region'>" + json[j]["area"] + "</h3>";
+        for (j = 0; j < (json.length) - 1; j++) {
+            listHtml += "<h3 class='region'>" + json[j]["area"] + "</h3><ul class='acc-contents'>";
             for (i = 0; i < (json[j]["detail"].length); i++) {
                 listHtml += "<li><input type='checkbox' value='" + json[j]["detail"][i]["place_detail"]["number"] + ", " + json[j]["detail"][i]["place_detail"]["lat"] + ", " + json[j]["detail"][i]["place_detail"]["lon"] + ", " + json[j]["detail"][i]["place_detail"]["name"] + "' name='checkBox'> " + json[j]["detail"][i]["place_detail"]["name"] + "</input></li>"
             };
+            listHtml += "</ul>";
         };
         listHtml += "</form>";
+        return listHtml;
+    })
+    .then(listHtml => {
+        let asideWrapper = document.getElementById("aside-wrapper");
         asideWrapper.innerHTML = listHtml;
-    });
-
+        // document.addEventListener("load", () => {
+            const region = document.getElementsByClassName('region');
+            for (let i = 0; i < region.length; i++) {
+                let regionEach = region[i];
+                let content = regionEach.nextElementSibling;
+                regionEach.addEventListener('click', () => {
+                    regionEach.classList.toggle('is-active');
+                    content.classList.toggle('is-open');
+                });
+            }
+        })
 
 
 // date format
