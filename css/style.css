@@ -1,0 +1,245 @@
+@charset "UTF-8";
+
+/* 全体-------------- */
+html {
+    font-size: 100%;
+}
+
+body {
+    font-family: "Yu Gothic Medium","游ゴシック Medium",YuGothic,"游ゴシック体","ヒラギノ角ゴ Pro W3",sans-serif;
+    line-height: 1.7;
+    color: #432;
+}
+
+a {
+    text-decoration: none;
+}
+
+img {
+    max-width: 100%;
+}
+
+.big-bg {
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+}
+
+
+/* ヘッダー
+    ----------------------------------------------------------------------- */
+
+
+.header {
+    display: flex;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 4%;
+}
+
+.title {
+    text-align: left;
+    font-size: 36px;
+    padding: 10px;
+    display: inline-block;
+    width: 240px;
+}
+
+#title-wrapper {
+    background-image: url(../image/header-bg.jpg);
+    height: 200px;
+    min-width: 1030px;  /* article min-width + aside min-width + margin 5*4 */
+    margin-bottom: 40px;
+}
+
+.date {
+    float: right;
+    font-size: 1.25rem;
+    text-transform: uppercase;
+    margin-top: 34px;
+    list-style: none;
+    display: block;
+    width: 360px;
+    color: #432;
+}
+
+input[type="date"] {
+    height: 20px;
+    padding-bottom: 5px;
+}
+
+.today {
+    margin: 10px 0;
+}
+
+/* main-contents wrapper
+    ----------------------------------------------------------------------  */
+
+article {
+    /* width: 74%; */
+    min-width: 800px;  /* 天気表示が改行しないように合わせる */
+    margin: 5px;
+    /* display: flex; */
+}
+
+aside {
+    /* width: 22%; */
+    min-width: 210px;  /* 赤倉が改行しないように合わせる */
+    margin: 5px;
+}
+
+/* article */
+
+.information {
+    border: 1px solid #432;
+    margin-bottom: 5px;
+    max-width: 800px;
+}
+
+.basic-info {
+    display: inline-block;
+    vertical-align: top;
+    padding: 5px;
+    width: 200px;
+}
+
+.weather-info {
+    display: inline-block;
+    width: 450px;
+}
+
+h2 {
+    font-size: 18px;
+}
+
+table {
+    margin-top: 10px;
+}
+
+
+table tr,td,th {
+    font-size: 70%;
+    padding: 0;
+    text-align: center;
+    border: solid 1px black;
+}
+
+table th {
+    width: 30px;
+}
+
+table td {
+    width: 50px;
+}
+
+
+
+/* aside */
+
+#ok {
+    border: 2px solid #0bd; 
+}
+
+.main-content {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 50px　
+}
+
+.sub-title {
+    font-size: 1.375rem;
+    padding: 0 8px 8px;
+    border-bottom: 2px #0bd solid;
+    font-weight: normal;
+}
+
+.region {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+#aside-wrapper li {
+    list-style: none;
+    border-bottom: 1px #ddd solid;
+}
+
+.sub-menu {
+    margin-bottom: 60px;
+    list-style: none;
+}
+
+.sub-menu a {
+    color: #432;
+    padding: 10px;
+    display: block;
+}
+.sub-menu a:hover {
+    color: #0bd;
+}
+
+
+
+/* accordion */
+
+.region {
+    margin-top: 10px;
+    background-color: #432;
+    border: 1px solid transparent;
+    color: #fff;
+    font-size: 16px;
+    padding: 5px 5px 5px 10px;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+}
+
+.region::before, 
+.region::after {
+    content: '';
+    display: block;
+    background-color: #fff;
+    position: absolute;
+    top: 50%;
+    width: 15px;
+    height: 2px;
+    right: 25px;
+}
+
+.region::after {
+    transform: rotate(90deg);
+    transition-duration: .3s;
+}
+
+.region:hover,
+.region:active,
+.region.is-active { 
+    background-color: #0bd;
+}
+
+.region.is-active::before {
+    opacity: 0;
+}
+
+.region.is-active::after {
+    transform: rotate(0);
+}
+
+.acc-contents {
+    border-left: 1px solid transparent;
+    border-right: 1px solid transparent;
+    padding: 2px 10px;
+    line-height: 0;
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition-duration: .3s;
+}
+
+.acc-contents.is-open {
+    border: 1px solid #00aaa7;
+    padding: 4px 10px;
+    line-height: normal; /* numberに書き換える*/
+    height: auto;
+    opacity: 1;
+}
+
