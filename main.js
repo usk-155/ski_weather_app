@@ -21,8 +21,7 @@ fetch(resortListUrl, {
                     + json[j]["detail"][i]["place_detail"]["number"] + ", " 
                     + json[j]["detail"][i]["place_detail"]["lat"] + ", " 
                     + json[j]["detail"][i]["place_detail"]["lon"] + ", " 
-                    + json[j]["detail"][i]["place_detail"]["name"] + ", "
-                    + json[j]["detail"][i]["place_detail"]["twitter"] 
+                    + json[j]["detail"][i]["place_detail"]["name"] 
                     + "' name='checkBox'> " + json[j]["detail"][i]["place_detail"]["name"] + "</input></li>"
             };
             listHtml += "</ul>";
@@ -63,11 +62,11 @@ let formatDate = (dateTime) => {
 // todayNow(今日)の日付時間 取得
 let today = new Date();
 const todayNow = document.getElementById("todayNow");
-let todayUnix = today.getTime()/1000; // 【 今日のUnixTime 】
+let todayUnix = Math.floor(today.getTime()/1000); // 【 今日のUnixTime 】
 // todayをHTMLに出力
 todayNow.textContent = "TODAY : " + formatDate(today); 
 
-// checkInの日付09時 取得　/　checkInUnix と todayUnix の時間差(整数値)を取得
+// checkInの日付09時 取得  /  checkInUnix と todayUnix の時間差(整数値)を取得
 document.getElementById("checkIn").onchange = function () {
     let checkInUnix = document.getElementById("checkIn").valueAsNumber/1000; // 【 checkInのUnixTime 】
     timeDiff = parseInt((checkInUnix - todayUnix)/3600); //時間差(整数値)
@@ -94,7 +93,7 @@ document.getElementById("checkIn").onchange = function () {
 
 let apiKey = "a533675e07f5f09476d1b1b748f2b159";
 
-function buttonClickOk() {
+async function buttonClickOk() {
 
     // 現在の時間(3時間で1コマ　1,2,3,4,5,6,7,0)
     let listNo = (parseInt(today.getHours() / 3) + 1) % 8;   // 
@@ -130,35 +129,84 @@ function buttonClickOk() {
         // let twitterId = result[4];
         // var container = document.getElementById("tweet-user-timeline");
 
-        let url = "https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&units=metric&appid=" + apiKey;
+        let url1 = "https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&units=metric&appid=" + apiKey;
         //         https://api.openweathermap.org/data/2.5/forecast?lat=38.1704429&lon=140.3992911&units=metric&appid=a533675e07f5f09476d1b1b748f2b159
         //         https://api.openweathermap.org/data/2.5/forecast?lat=42.7521098177761&lon=140.3992911&units=metric&appid=a533675e07f5f09476d1b1b748f2b159
-        //         ルスツ　42.7521098177761 140.897838908011
+        //         ルスツ  42.7521098177761  140.897838908011
         //         weather-ja.jsonc
 
-        fetch(url, {
-            method: "GET",
+        //         http://history.openweathermap.org/data/2.5/history/city?lat=42.7521098177761&lon=140.897838908011&type=hour&start=1635997270&cnt=1&appid=a533675e07f5f09476d1b1b748f2b159
+        //         https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=42.7521098177761&lon=140.897838908011&dt=1635997270&appid=a533675e07f5f09476d1b1b748f2b159
+
+        //         過去5日間の天気
+        let url2 = "https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=" + lat + "&lon=" + lon + "&dt=" + todayUnix + "&appid=" + apiKey;
+        //         https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=42.7521098177761&lon=140.897838908011&dt=1636000560&appid=a533675e07f5f09476d1b1b748f2b159
+
+        //         現在〜予測
+        let url3 = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude={part}&appid=" + apiKey;
+        //         https://api.openweathermap.org/data/2.5/onecall?lat=42.7521098177761&lon=140.897838908011&exclude=minutely,daily,alerts&appid=a533675e07f5f09476d1b1b748f2b159
+
+
+
+
+        const fetchForecast = fetch(url1);
+        const fetchTimeMachine = fetch(url2);
+        const fetchOneCall = fetch(url3);
+
+        Promise.all([fetchForecast, fetchTimeMachine, fetchOneCall])
+        .then(async ([forecast, timeMachine, oneCall]) => {
+            const forecastJson = await forecast.json();
+            const timeMachineJson = await timeMachine.json();
+            const oneCallJson = await oneCall.json();
+            return [forecastJson, timeMachineJson, oneCallJson]
         })
-        .then(response => response.json())
-        .then(json => {
+        .then(response => {
+            console.log(response);
+
+            let previousSnow = 0;     // チェックイン前12時間の降雪量
+            if (24 <= timeDiff) {
+                for (let i = timeDiff - 24; i < timeDiff; i++) {
+                    if (response[2]["hourly"][i]["weather"]["0"]["main"] == "Snow") {
+                        previousSnow += response[2]["hourly"][i]["snow"]["1h"];
+                    };
+                };
+            } else if (timeDiff < 24) {
+                for (let i = 0; i < 24 - timeDiff; i++) {
+                    if (response[1]["hourly"][i]["weather"]["0"]["main"] == "Snow") {
+                        previousSnow += response[1]["hourly"][i]["snow"]["1h"];
+                    };
+                };
+                for (let i = 0; i < timeDiff; i++) {
+                    if (response[2]["hourly"][i]["weather"]["0"]["main"] == "Snow") {
+                        previousSnow += response[2]["hourly"][i]["snow"]["1h"];
+                    };
+                };
+            };
+
+            let integerPreviousSnow = Math.round(previousSnow);
+            console.log(integerPreviousSnow);
+
+
             idNaming = "information" + num;
             const infoDiv = document.createElement("div");
 
             // html
             let html = "<h2>" + name + "</h2>";
-            html += "<p>営業</p>";
-            html += "<p>天気</p>";
+            html += "<p>営　　業：</p>";
+            html += "<p>天　　気：</p>";
+            html += "<p>前夜降雪：" + integerPreviousSnow + "㎜</p>";
+
 
 
             // weatherInfo {weatherTable}
             let weatherTable = "<table>";           // １段目
                                                     // 日付 時刻
-            weatherTable += "<tr><th>" + new Date(json["list"][listDt]["dt"] * 1000).toLocaleDateString('ja-JP').slice(5) + "</th>";
+            weatherTable += "<tr><th>" + new Date(response[0]["list"][listDt]["dt"] * 1000).toLocaleDateString('ja-JP').slice(5) + "</th>";
             for (i = listDt + 0; i < listDt + listNo; i++) {          // 時間 現在(listNo)まで「 - 」
                 weatherTable += "<td>-</td>";
             };
             for (i = listDt + 0; i < listDt + (8 - listNo); i++) {    // 時間 以降表示
-                weatherTable += "<td>" + new Date(json["list"][i]["dt"] * 1000).toLocaleString('ja-JP', { hour: "numeric" }) + "</td>";
+                weatherTable += "<td>" + new Date(response[0]["list"][i]["dt"] * 1000).toLocaleString('ja-JP', { hour: "numeric" }) + "</td>";
             };
             weatherTable += "</tr>";
             weatherTable += "<tr><th>天気</th>"     // 天気
@@ -167,7 +215,7 @@ function buttonClickOk() {
             };
 
             for (i = listDt + 0; i < listDt + (8 - listNo); i++) {    //  天気 以降表示
-                weatherTable += '<td><img src="http://openweathermap.org/img/w/' + json["list"][i]["weather"]["0"]["icon"] + '.png" width="25" height="25"></img></td>';
+                weatherTable += '<td><img src="http://openweathermap.org/img/w/' + response[0]["list"][i]["weather"]["0"]["icon"] + '.png" width="25" height="25"></img></td>';
             };
 
             weatherTable += "</tr>";
@@ -176,7 +224,7 @@ function buttonClickOk() {
                 weatherTable += "<td>-</td>";
             };
             for (i = listDt + 0; i < listDt + (8 - listNo); i++) {    // 気温 以降表示
-                weatherTable += "<td>" + Math.round(json["list"][i]["main"]["temp"]) + "℃</td>";
+                weatherTable += "<td>" + Math.round(response[0]["list"][i]["main"]["temp"]) + "℃</td>";
             };
             weatherTable += "</tr>";
             weatherTable += "<tr><th>降水</th>"     // 降水
@@ -184,10 +232,10 @@ function buttonClickOk() {
                 weatherTable += "<td>-</td>";
             };
             for (i = listDt + 0; i < listDt + (8 - listNo); i++) {    // 降水 以降表示
-                if (json["list"][i]["weather"]["0"]["main"] == "Rain") {
-                    weatherTable += "<td>" + json["list"][i]["rain"]["3h"] + "mm</td>";
+                if (response[0]["list"][i]["weather"]["0"]["main"] == "Rain") {
+                    weatherTable += "<td>" + Math.round(response[0]["list"][i]["rain"]["3h"] * 10) / 10 + "㎜</td>";
                 } else {
-                    weatherTable += "<td>" + "0mm" + "</td>";
+                    weatherTable += "<td>" + "0㎜" + "</td>";
                 };
             };
             weatherTable += "</tr>";
@@ -196,10 +244,10 @@ function buttonClickOk() {
                 weatherTable += "<td>-</td>";
             };
             for (i = listDt + 0; i < listDt + (8 - listNo); i++) {    // 降雪 以降表示
-                if (json["list"][i]["weather"]["0"]["main"] == "Snow") {
-                    weatherTable += "<td>" + json["list"][i]["snow"]["3h"] + "mm</td>";
+                if (response[0]["list"][i]["weather"]["0"]["main"] == "Snow") {
+                    weatherTable += "<td>" + Math.round(response[0]["list"][i]["snow"]["3h"] * 10) / 10 + "㎜</td>";
                 } else {
-                    weatherTable += "<td>" + "0mm" + "</td>";
+                    weatherTable += "<td>" + "0㎜" + "</td>";
                 };
             };
             weatherTable += "</tr>";
@@ -207,37 +255,37 @@ function buttonClickOk() {
 
             weatherTable += "<table>";                          // ２段目
                                                                 // 日付 時刻
-            weatherTable += "<tr><th>" + new Date(json["list"][listDt + 8]["dt"] * 1000).toLocaleDateString('ja-JP').slice(5) + "</th>";
+            weatherTable += "<tr><th>" + new Date(response[0]["list"][listDt + 8]["dt"] * 1000).toLocaleDateString('ja-JP').slice(5) + "</th>";
             for (i = listDt + (8 - listNo); i < listDt + (16 - listNo); i++) {    // 時間 表示
-                weatherTable += "<td>" + new Date(json["list"][i]["dt"] * 1000).toLocaleString('ja-JP', { hour: "numeric" }) + "</td>";
+                weatherTable += "<td>" + new Date(response[0]["list"][i]["dt"] * 1000).toLocaleString('ja-JP', { hour: "numeric" }) + "</td>";
             };
             weatherTable += "</tr>";
             weatherTable += "<tr><th>天気</th>"                 // 天気
             for (i = listDt + (8 - listNo); i < listDt + (16 - listNo); i++) {    // 天気 表示
-                // weatherTable += "<td>" + json["list"][i]["weather"]["0"]["main"] + "</td>";
-                weatherTable += '<td><img src="http://openweathermap.org/img/w/' + json["list"][i]["weather"]["0"]["icon"] + '.png" width="30" height="30"></img></td>';
+                // weatherTable += "<td>" + response[0]["list"][i]["weather"]["0"]["main"] + "</td>";
+                weatherTable += '<td><img src="http://openweathermap.org/img/w/' + response[0]["list"][i]["weather"]["0"]["icon"] + '.png" width="30" height="30"></img></td>';
             };
             weatherTable += "</tr>";
             weatherTable += "<tr><th>気温</th>"                 // 気温
             for (i = listDt + (8 - listNo); i < listDt + (16 - listNo); i++) {    // 気温 表示
-                weatherTable += "<td>" + Math.round(json["list"][i]["main"]["temp"]) + "℃</td>";
+                weatherTable += "<td>" + Math.round(response[0]["list"][i]["main"]["temp"]) + "℃</td>";
             };
             weatherTable += "</tr>";
             weatherTable += "<tr><th>降水</th>"                 // 降水 
             for (i = listDt + (8 - listNo); i < listDt + (16 - listNo); i++) {    // 降水 表示
-                if (json["list"][i]["weather"]["0"]["main"] == "Rain") {
-                    weatherTable += "<td>" + json["list"][i]["rain"]["3h"] + "mm</td>";
+                if (response[0]["list"][i]["weather"]["0"]["main"] == "Rain") {
+                    weatherTable += "<td>" + Math.round(response[0]["list"][i]["rain"]["3h"] * 10) / 10 + "㎜</td>";
                 } else {
-                    weatherTable += "<td>" + "0mm" + "</td>";
+                    weatherTable += "<td>" + "0㎜" + "</td>";
                 };
             };
             weatherTable += "</tr>";
             weatherTable += "<tr><th>降雪</th>"                 // 降雪
             for (i = listDt + (8 - listNo); i < listDt + (16 - listNo); i++) {    // 降雪 表示
-                if (json["list"][i]["weather"]["0"]["main"] == "Snow") {
-                    weatherTable += "<td>" + json["list"][i]["snow"]["3h"] + "mm</td>";
+                if (response[0]["list"][i]["weather"]["0"]["main"] == "Snow") {
+                    weatherTable += "<td>" + Math.round(response[0]["list"][i]["snow"]["3h"] * 10) / 10 + "㎜</td>";
                 } else {
-                    weatherTable += "<td>" + "0mm" + "</td>";
+                    weatherTable += "<td>" + "0㎜" + "</td>";
                 };
             };
             weatherTable += "</tr>";
@@ -266,7 +314,10 @@ function buttonClickOk() {
             idNaming = "information" + num;
             infoDiv.id = idNaming;
             infoDiv.className = "information";
-        });
+        })
+        .catch (err => {
+            console.log(err)
+        })
     };
 };
 
