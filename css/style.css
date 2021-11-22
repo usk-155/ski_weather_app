@@ -30,11 +30,8 @@ img {
     ----------------------------------------------------------------------- */
 
 
-.header {
-    display: flex;
+header {
     max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 4%;
 }
 
 .title {
@@ -143,7 +140,7 @@ table td {
 .main-content {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 50px　
+    margin-bottom: 50px;
 }
 
 .sub-title {
@@ -243,3 +240,21 @@ table td {
     opacity: 1;
 }
 
+
+/* フッター
+    ----------------------------------------------------------------------- */
+
+footer {
+    max-width: 1100px;
+    height: 50px;
+    line-height: 50px;
+    margin: 0 auto;
+    padding: 0 4%;
+    background-color: #000;
+}
+
+footer h3 {
+    font-size: 10px;
+    color: #fff;
+    text-align: center;
+}
