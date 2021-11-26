@@ -30,22 +30,26 @@ img {
     ----------------------------------------------------------------------- */
 
 
-header {
-    max-width: 1100px;
-}
-
 .title {
-    text-align: left;
-    font-size: 36px;
     padding: 10px;
     display: inline-block;
-    width: 240px;
+    width: 500px;
+}
+
+.page-title {
+    text-align: left;
+    font-size: 36px;
+}
+.p {
+    text-align: center;
+    font-size: 12px;
+
 }
 
 #title-wrapper {
     background-image: url(../image/header-bg.jpg);
     height: 200px;
-    min-width: 1030px;  /* article min-width + aside min-width + margin 5*4 */
+    min-width: 920px;  /* article min-width + aside min-width + margin 5*4 */
     margin-bottom: 40px;
 }
 
@@ -72,15 +76,26 @@ input[type="date"] {
 /* main-contents wrapper
     ----------------------------------------------------------------------  */
 
+.main-content {
+    display: flex;
+    width: 100%;
+    min-width: 920px;  /* 天気表示が改行しないように合わせる */
+    justify-content: center;
+    /* justify-content: space-between; */
+    margin: 0 auto;
+    margin-bottom: 50px;
+}
+
 article {
-    /* width: 74%; */
-    min-width: 800px;  /* 天気表示が改行しないように合わせる */
+    display: inline-block;
+    width: 690px;
+    min-width: 690px;  /* 天気表示が改行しないように合わせる */
     margin: 5px;
-    /* display: flex; */
 }
 
 aside {
-    /* width: 22%; */
+    display: inline-block;
+    width: 210px;
     min-width: 210px;  /* 赤倉が改行しないように合わせる */
     margin: 5px;
 }
@@ -90,7 +105,7 @@ aside {
 .information {
     border: 1px solid #432;
     margin-bottom: 5px;
-    max-width: 800px;
+    max-width: 680px;
 }
 
 .basic-info {
@@ -106,7 +121,7 @@ aside {
 }
 
 h2 {
-    font-size: 18px;
+    font-size: 20px;
 }
 
 table {
@@ -135,12 +150,6 @@ table td {
 
 #ok {
     border: 2px solid #0bd; 
-}
-
-.main-content {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 50px;
 }
 
 .sub-title {
@@ -245,11 +254,10 @@ table td {
     ----------------------------------------------------------------------- */
 
 footer {
-    max-width: 1100px;
+    max-width: 100%;
+    min-width: 920px;
     height: 50px;
     line-height: 50px;
-    margin: 0 auto;
-    padding: 0 4%;
     background-color: #000;
 }
 

@@ -53,9 +53,14 @@ fetch(resortListUrl, {
  * date, todayNow, checkIn
  */
 
+// date display
+let displayDate = (dateTime) => {
+    let displayed_date = dateTime.getFullYear() + "/" + (dateTime.getMonth() + 1).toString().padStart(2, '0') + "/" + dateTime.getDate().toString().padStart(2, '0') + " " + dateTime.getHours().toString().padStart(2, '0') + ":" + dateTime.getMinutes().toString().padStart(2, '0');
+    return displayed_date;
+}
 // date format
 let formatDate = (dateTime) => {
-    let formatted_date = dateTime.getFullYear() + "/" + (dateTime.getMonth() + 1).toString().padStart(2, '0') + "/" + dateTime.getDate().toString().padStart(2, '0') + " " + dateTime.getHours().toString().padStart(2, '0') + ":" + dateTime.getMinutes().toString().padStart(2, '0');
+    let formatted_date = dateTime.getFullYear() + "-" + (dateTime.getMonth() + 1).toString().padStart(2, '0') + "-" + dateTime.getDate().toString().padStart(2, '0');
     return formatted_date;
 }
 
@@ -64,14 +69,23 @@ let today = new Date();
 const todayNow = document.getElementById("todayNow");
 let todayUnix = Math.floor(today.getTime()/1000); // 【 今日のUnixTime 】
 // todayをHTMLに出力
-todayNow.textContent = "TODAY : " + formatDate(today); 
+todayNow.textContent = "TODAY : " + displayDate(today); 
 
 // checkInの日付09時 取得  /  checkInUnix と todayUnix の時間差(整数値)を取得
-document.getElementById("checkIn").onchange = function () {
+let _checkIn = document.getElementById('checkIn');
+_checkIn.onchange = function () {
     let checkInUnix = document.getElementById("checkIn").valueAsNumber/1000; // 【 checkInのUnixTime 】
     timeDiff = parseInt((checkInUnix - todayUnix)/3600); //時間差(整数値)
 }; 
 
+// checkIn  入力範囲を「今日」〜「２日後」の範囲に設定する
+let _nowStr = formatDate(today);
+let maxStr = new Date(_nowStr);
+maxStr.setDate(maxStr.getDate() + 2);
+let _maxStr = formatDate(maxStr);
+
+_checkIn.attributes.min.value = _nowStr;
+_checkIn.attributes.max.value = _maxStr;
 
 
 // (checkIn-todayNow)/3 => 整数　=2 → list2からスタート
@@ -196,9 +210,7 @@ async function buttonClickOk() {
 
                 // html
                 let html = "<h2>" + name + "</h2>";
-                html += "<p>営　　業：</p>";
-                html += "<p>天　　気：</p>";
-                html += "<p>前夜降雪：" + integerPreviousSnow + "㎜</p>";
+                html += "<p>パウダースノー：" + integerPreviousSnow + "㎜</p>";
 
 
                 // weatherInfo {weatherTable}
