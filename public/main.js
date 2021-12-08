@@ -105,7 +105,9 @@ _checkIn.attributes.max.value = _maxStr;
  * 天気情報取得, レンダリング
  */
 
-let apiKey = "a533675e07f5f09476d1b1b748f2b159";
+require("dotenv").config(); //グローバルオブジェクトとしてロード
+
+let apiKey = process.env.API_KEY;
 
 async function buttonClickOk() {
 
