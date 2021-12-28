@@ -1,1 +1,21 @@
-{}
+{
+  "name": "tenki_app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/usk-155/usk_site.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/usk-155/usk_site/issues"
+  },
+  "homepage": "https://github.com/usk-155/usk_site#readme",
+  "description": ""
+}
